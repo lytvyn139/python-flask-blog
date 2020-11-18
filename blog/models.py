@@ -1,10 +1,15 @@
 from datetime import datetime 
-from blog import db
+from blog import db, login_manager
+from flask_login import UserMixin
 
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
 
 # DB
 # One to many: One user have many post, but post have only one author
-class User(db.Model):
+
+class User(db.Model, UserMixin):
   id = db.Column(db.Integer, primary_key=True ) #primary_key=True unique to each user
   username = db.Column(db.String(20), unique=True, nullable=False)
   email = db.Column(db.String(120), unique=True, nullable=False)

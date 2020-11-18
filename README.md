@@ -12,7 +12,7 @@ Python + Flask (Jinja2, SQLAlchemy, Forms) + Bootstrap
 python
 from blog import db
 db.create_all()
-from blog import User, Post
+from blog.models import User, Post
 user_1 = User(username='Root', email='Root@gmail.com', password='11111')
 db.session.add(user_1)
 
