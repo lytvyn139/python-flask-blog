@@ -54,7 +54,10 @@ db.drop_all()
 python3 -m venv py3Env
 source py3Env/bin/activate
 pip3 install -r requirements.txt
-python app.py
+#pip3 install flask flask_sqlalchemy flask_wtf email_validator
+#pip3 freeze > requirements.txt
+
+python run.py
 
 ```
 
