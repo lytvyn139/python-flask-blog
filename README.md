@@ -4,7 +4,7 @@ Flask blog pet project
 
 ## Stack used
 
-Python + Flask + Bootstrap
+Python + Flask (Jinja2) + Bootstrap
 
 ## Installation
 
