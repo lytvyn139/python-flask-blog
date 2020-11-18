@@ -1,8 +1,8 @@
 from flask import render_template, url_for, flash, redirect, request
-from blog import app, db, bcrypt
-from blog.forms import RegistrationForm, LoginForm
-from blog.models import User, Post
 from flask_login import login_user, current_user, logout_user, login_required
+from blog import app, db, bcrypt
+from blog.forms import RegistrationForm, LoginForm, UpdateAccountForm
+from blog.models import User, Post
 
 posts = [
   {
@@ -66,12 +66,26 @@ def login():
         flash('Login Unsuccessful. Please check email and password', 'danger')
     return render_template('login.html', title='Login', form=form)
 
+
 @app.route("/logout")
 def logout():
     logout_user()
+    
     return redirect(url_for('home'))
 
-@app.route("/account")
+@app.route("/account", methods=['GET', 'POST'])
 @login_required #also check __init__.py ln 16
 def account():
-    return render_template('account.html', title='Account')
+  form = UpdateAccountForm()
+  if form.validate_on_submit():
+    current_user.username = form.username.data
+    current_user.email = form.email.data
+    db.session.commit()
+    flash('data has been updated!', 'success')
+    return redirect(url_for('account'))
+  #this handles form pre-populated with cur values  
+  elif request.method == 'GET':
+    form.username.data = current_user.username
+    form.email.data = current_user.email
+  image_file = url_for('static', filename='profile_pics/' + current_user.image_file)
+  return render_template('account.html', title='Account', image_file=image_file, form=form)
