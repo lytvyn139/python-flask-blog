@@ -8,10 +8,13 @@ from blog.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm
 from blog.models import User, Post
 
 #two routes leads to home
-@app.route('/') # <-- flask decorators
-@app.route('/home')
+@app.route("/")
+@app.route("/home")
 def home():
-  posts = Post.query.all()
+  posts = Post.query.order_by(Post.date_posted.desc()).all()
+  #pagination is not working!
+  #page = request.args.get('page', 1, type=int)
+  #posts = Post.query.order_by(Post.date_posted.desc()).paginate(page=page, per_page=5)
   return render_template('home.html', posts=posts)
 
 @app.route('/about')
@@ -146,3 +149,13 @@ def delete_post(post_id):
     db.session.commit()
     flash('Your post has been deleted!', 'success')
     return redirect(url_for('home'))
+
+# THIS LINK WILL SHOW USER POSTS
+@app.route("/user/<string:username>")
+def user_posts(username):
+    page = request.args.get('page', 1, type=int)
+    user = User.query.filter_by(username=username).first_or_404()
+    posts = Post.query.filter_by(author=user)\
+        .order_by(Post.date_posted.desc())\
+        .paginate(page=page, per_page=5)
+    return render_template('user_posts.html', posts=posts, user=user)
